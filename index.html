@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicketFlow - Premium Events</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #6f42c1; /* Roxo Bootstrap */
+            --secondary-color: #0dcaf0; /* Azul Ciano */
+            --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --card-bg: #24243e;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: #eee;
+        }
+
+        /* Navbar estilo Glassmorphism */
+        .navbar {
+            background: rgba(36, 36, 62, 0.8) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .brand-gradient {
+            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* Estilos da Tela de Login */
+        .login-container {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-login {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+        }
+
+        .form-floating > .form-control, 
+        .form-floating > .form-select {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        .form-floating > label { color: #aaa; }
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.25);
+        }
+
+        .btn-gradiente {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradiente:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(111, 66, 193, 0.4);
+            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+        }
+
+        /* Estilos dos Cards de Eventos */
+        #tela-eventos { display: none; padding-top: 80px; }
+
+        .card-evento {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-evento:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        .card-img-top {
+            height: 180px;
+            object-fit: cover;
+            filter: brightness(0.8) contrast(1.2);
+            transition: filter 0.3s ease;
+        }
+        .card-evento:hover .card-img-top { filter: brightness(1); }
+
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+
+        .card-title { font-weight: 700; color: #fff; margin-bottom: 1rem; }
+        .event-meta { font-size: 0.9rem; color: #ccc; margin-bottom: 0.5rem; }
+        .event-meta i { color: var(--secondary-color); width: 20px; margin-right: 5px; }
+        .card-text { color: #aaa; flex-grow: 1; margin-top: 1rem; }
+
+        #loading-spinner { display: none; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fa-solid fa-ticket-simple fa-rotate-by" style="color: var(--secondary-color); --fa-rotate-angle: -20deg;"></i>
+                <span class="brand-gradient ms-2">TicketFlow</span>
+            </a>
+            
+            <div class="d-flex align-items-center">
+                <div id="user-info" class="me-3 text-muted small" style="display: none;">
+                    <i class="fa-regular fa-user"></i> <span id="username-display">Logado</span>
+                </div>
+                <button id="btn-logout" class="btn btn-outline-danger btn-sm rounded-pill px-3" style="display: none;" onclick="logout()">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <section id="tela-login" class="login-container">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card card-login">
+                    <div class="text-center mb-4">
+                         <i class="fa-solid fa-lock fa-3x" style="color: var(--primary-color)"></i>
+                         <h3 class="mt-3 fw-bold">Acesso Restrito</h3>
+                         <p class="text-muted small">Entre para ver os melhores eventos</p>
+                    </div>
+
+                    <div id="alert-erro" class="alert alert-danger d-flex align-items-center d-none" role="alert">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                        <div id="msg-erro-txt"></div>
+                    </div>
+                    
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="email" placeholder="name@example.com" value="teste@seguro.com">
+                        <label for="email">Email</label>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input type="password" class="form-control" id="senha" placeholder="Password" value="123">
+                        <label for="senha">Senha</label>
+                    </div>
+
+                    <button onclick="fazerLogin()" id="btn-login" class="btn btn-gradiente w-100 rounded-pill">
+                        <i class="fa-solid fa-right-to-bracket me-2"></i> ENTRAR
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="tela-eventos">
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <h2 class="fw-bold mb-0"><span class="text-primary">Próximos</span> Eventos 🎸</h2>
+                <span class="badge bg-secondary rounded-pill px-3 py-2">
+                    <i class="fa-solid fa-calendar-days me-1"></i> Agenda 2025
+                </span>
+            </div>
+
+            <div id="loading-spinner" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+                <p class="mt-3 text-muted">Buscando os melhores shows...</p>
+            </div>
+
+            <div id="lista-eventos" class="row g-4">
+                </div>
+        </section>
+
+        <div class="modal fade" id="modalCompra" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="background-color: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">🎟️ Finalizar Compra</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-compra">
+                            <div class="mb-3">
+                                <label class="form-label text-muted small">TIPO DE INGRESSO</label>
+                                <select class="form-select bg-dark text-white border-secondary" id="select-ingresso">
+                                    <option selected disabled>Carregando...</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted small">QUANTIDADE</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary" id="qtd-ingresso" value="1" min="1" max="10">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-gradiente rounded-pill px-4" onclick="confirmarCompra()">
+                            <i class="fa-solid fa-check"></i> Confirmar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const API_URL = "http://localhost:8080";
+        const tokenKey = "ticketflow_token_v3";
+        const userKey = "ticketflow_userid"; // Salva o ID do usuário
+        let modalBootstrap = null; 
+
+        const telaLogin = document.getElementById("tela-login");
+        const telaEventos = document.getElementById("tela-eventos");
+        const btnLogout = document.getElementById("btn-logout");
+        const userInfo = document.getElementById("user-info");
+        const usernameDisplay = document.getElementById("username-display");
+        const loadingSpinner = document.getElementById("loading-spinner");
+        const listaEventosContainer = document.getElementById("lista-eventos");
+        const alertErro = document.getElementById("alert-erro");
+        const btnLogin = document.getElementById("btn-login");
+        const selectIngresso = document.getElementById("select-ingresso");
+
+        // --- UTILITÁRIOS ---
+        function mostrarErro(mensagem) {
+            document.getElementById("msg-erro-txt").innerText = mensagem;
+            alertErro.classList.remove("d-none");
+            setTimeout(() => alertErro.classList.add("d-none"), 5000);
+        }
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                loadingSpinner.style.display = "block";
+                listaEventosContainer.style.display = "none";
+            } else {
+                loadingSpinner.style.display = "none";
+                listaEventosContainer.style.display = "flex";
+            }
+        }
+
+        function formatarData(dataString) {
+            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            return new Date(dataString).toLocaleDateString('pt-BR', options);
+        }
+
+        // --- LÓGICA DE LOGIN ---
+        async function fazerLogin() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("senha").value;
+
+            const textoOriginal = btnLogin.innerHTML;
+            btnLogin.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Entrando...';
+            btnLogin.disabled = true;
+            alertErro.classList.add("d-none");
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem(tokenKey, data.token);
+                    localStorage.setItem(userKey, data.userId); // Importante para a compra!
+                    localStorage.setItem("username", data.nome || "Usuário");
+                    alternarTelas(true);
+                } else {
+                    mostrarErro("Credenciais inválidas. Verifique seus dados.");
+                }
+            } catch (error) {
+                console.error(error);
+                mostrarErro("Falha ao conectar. Verifique se o servidor Java está rodando.");
+            } finally {
+                btnLogin.innerHTML = textoOriginal;
+                btnLogin.disabled = false;
+            }
+        }
+
+        // --- LISTAR EVENTOS ---
+        async function carregarEventos() {
+            const token = localStorage.getItem(tokenKey);
+            setLoading(true);
+            
+            try {
+                const response = await fetch(`${API_URL}/events?sort=date,asc`, {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const dados = await response.json();
+                    renderizarCards(dados.content);
+                } else if (response.status === 403) {
+                    logout();
+                } else {
+                    listaEventosContainer.innerHTML = `<div class="alert alert-warning col-12">Erro ao buscar eventos.</div>`;
+                }
+            } catch (error) {
+                listaEventosContainer.innerHTML = `<div class="alert alert-danger col-12">Erro de conexão.</div>`;
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function renderizarCards(eventos) {
+            listaEventosContainer.innerHTML = "";
+            if (eventos.length === 0) {
+                 listaEventosContainer.innerHTML = `<div class="col-12 text-center text-muted py-5"><h4>Nenhum evento encontrado.</h4></div>`;
+                return;
+            }
+
+            eventos.forEach((evento, index) => {
+                const imagemUrl = `https://source.unsplash.com/random/400x250/?concert,festival&sig=${index}`;
+                const statusColor = evento.status === 'CONFIRMADO' ? 'success' : 'warning';
+
+                const cardHtml = `
+                    <div class="col-md-6 col-lg-4 d-flex align-items-stretch" style="animation: fadeIn 0.5s ease-in-out ${index * 0.1}s both;">
+                        <div class="card card-evento w-100">
+                            <div style="position: relative;">
+                                <img src="${imagemUrl}" class="card-img-top" onerror="this.src='https://via.placeholder.com/400x250?text=Show'">
+                                <span class="position-absolute top-0 end-0 badge bg-${statusColor} m-2">${evento.status || 'EM BREVE'}</span>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title text-truncate">${evento.titulo}</h5>
+                                <div class="event-meta mt-3">
+                                    <i class="fa-solid fa-calendar-days"></i> ${formatarData(evento.date)}
+                                </div>
+                                <div class="event-meta text-truncate">
+                                    <i class="fa-solid fa-location-dot"></i> ${evento.venue ? evento.venue.nome : 'Local a definir'}
+                                </div>
+                                <p class="card-text text-truncate-3 mt-3">${evento.descricao || ''}</p>
+                                <div class="mt-auto pt-3">
+                                    <button type="button" class="btn btn-gradiente w-100 rounded-pill" onclick="abrirModalCompra('${evento.id}')">
+                                        <i class="fa-solid fa-ticket me-2"></i> COMPRAR INGRESSO
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                listaEventosContainer.innerHTML += cardHtml;
+            });
+        }
+
+        // --- MODAL DE COMPRA ---
+        async function abrirModalCompra(eventoId) {
+            const elModal = document.getElementById('modalCompra');
+            modalBootstrap = new bootstrap.Modal(elModal);
+            modalBootstrap.show();
+
+            selectIngresso.innerHTML = "<option>Carregando...</option>";
+            const token = localStorage.getItem(tokenKey);
+
+            try {
+                const response = await fetch(`${API_URL}/ticket-types`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const tipos = await response.json();
+                const tiposDoEvento = tipos.filter(t => t.event.id === eventoId);
+
+                selectIngresso.innerHTML = "";
+                if(tiposDoEvento.length === 0) {
+                    selectIngresso.innerHTML = "<option disabled>Esgotado</option>";
+                } else {
+                    tiposDoEvento.forEach(t => {
+                        selectIngresso.innerHTML += `<option value="${t.id}">${t.nome} - R$ ${t.preco} (${t.quantidadeDisponivel} rest.)</option>`;
+                    });
+                }
+            } catch(e) {
+                console.error(e);
+                selectIngresso.innerHTML = "<option disabled>Erro ao carregar</option>";
+            }
+        }
+
+        async function confirmarCompra() {
+            const ticketTypeId = selectIngresso.value;
+            const quantidade = document.getElementById("qtd-ingresso").value;
+            const userId = localStorage.getItem(userKey);
+            const token = localStorage.getItem(tokenKey);
+
+            if(!ticketTypeId) return alert("Selecione um ingresso!");
+
+            try {
+                const response = await fetch(`${API_URL}/orders`, {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ userId, ticketTypeId, quantidade: parseInt(quantidade) })
+                });
+
+                if(response.ok) {
+                    alert("✅ Compra realizada com sucesso!");
+                    modalBootstrap.hide();
+                    carregarEventos(); // Atualiza para ver estoque baixando
+                } else {
+                    alert("❌ Erro na compra. Verifique o estoque.");
+                }
+            } catch (error) {
+                alert("Erro de conexão.");
+            }
+        }
+
+        // --- CONTROLE DE TELA ---
+        function alternarTelas(logado) {
+            if (logado) {
+                telaLogin.classList.add("d-none");
+                telaEventos.style.display = "block";
+                btnLogout.style.display = "block";
+                userInfo.style.display = "block";
+                usernameDisplay.innerText = `Olá, ${localStorage.getItem("username") || 'Visitante'}`;
+                carregarEventos();
+            } else {
+                telaLogin.classList.remove("d-none");
+                telaEventos.style.display = "none";
+                btnLogout.style.display = "none";
+                userInfo.style.display = "none";
+                listaEventosContainer.innerHTML = "";
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            alternarTelas(false);
+        }
+
+        // Auto-login
+        if (localStorage.getItem(tokenKey)) alternarTelas(true);
+
+        // CSS Extra injetado
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+            .text-truncate-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
