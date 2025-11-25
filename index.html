@@ -24,7 +24,6 @@
             color: #eee;
         }
 
-        /* Navbar */
         .navbar {
             background: rgba(36, 36, 62, 0.95) !important;
             backdrop-filter: blur(10px);
@@ -39,7 +38,6 @@
             letter-spacing: 1px;
         }
 
-        /* Login */
         .login-container {
             min-height: 80vh;
             display: flex;
@@ -136,12 +134,11 @@
                     <i class="fa-solid fa-ticket"></i> Meus Ingressos
                 </button>
 
-                <div id="user-info" class="text-muted small ms-2" style="display: none;">
+                <div id="user-info" class="me-3 text-muted small ms-2" style="display: none;">
                     <i class="fa-regular fa-user"></i> <span id="username-display">Logado</span>
                 </div>
-                
                 <button id="btn-logout" class="btn btn-outline-danger btn-sm rounded-pill px-3 ms-2" style="display: none;" onclick="logout()">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
                 </button>
             </div>
         </div>
@@ -163,6 +160,13 @@
                         <div id="msg-erro-txt"></div>
                     </div>
                     
+                    <a href="http://localhost:8080/oauth2/authorization/google" class="btn btn-light w-100 rounded-pill border d-flex align-items-center justify-content-center mb-3 fw-bold" style="color: #444;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" style="width: 20px; margin-right: 10px;">
+                        Entrar com Google
+                    </a>
+
+                    <div class="text-center mb-3 text-muted small">——— OU ———</div>
+
                     <div class="form-floating mb-3">
                         <input type="email" class="form-control" id="email" placeholder="name@example.com" value="teste@seguro.com">
                         <label for="email">Email</label>
@@ -192,8 +196,7 @@
                 <p class="mt-3 text-muted">Buscando os melhores shows...</p>
             </div>
 
-            <div id="lista-eventos" class="row g-4">
-                </div>
+            <div id="lista-eventos" class="row g-4"></div>
         </section>
 
         <div class="modal fade" id="modalCompra" tabindex="-1" aria-hidden="true">
@@ -312,7 +315,6 @@
                     mostrarErro("Credenciais inválidas.");
                 }
             } catch (error) {
-                console.error(error);
                 mostrarErro("Falha ao conectar.");
             } finally {
                 btnLogin.innerHTML = 'ENTRAR';
@@ -397,7 +399,7 @@
 
                 selectIngresso.innerHTML = "";
                 if(tiposDoEvento.length === 0) {
-                    selectIngresso.innerHTML = "<option disabled>Esgotado / Não disponível</option>";
+                    selectIngresso.innerHTML = "<option disabled>Esgotado</option>";
                 } else {
                     tiposDoEvento.forEach(t => {
                         selectIngresso.innerHTML += `<option value="${t.id}">${t.nome} - R$ ${t.preco}</option>`;
@@ -429,7 +431,6 @@
                 if(response.ok) {
                     alert("✅ Compra realizada!");
                     modalBootstrap.hide();
-                    // Abre a carteira automaticamente após comprar
                     verMeusIngressos();
                 } else {
                     alert("❌ Erro na compra.");
@@ -439,7 +440,7 @@
             }
         }
 
-        // --- MEUS INGRESSOS (NOVIDADE) ---
+        // --- MEUS INGRESSOS ---
         async function verMeusIngressos() {
             const elModal = document.getElementById('modalMeusIngressos');
             modalIngressosBootstrap = new bootstrap.Modal(elModal);
@@ -466,9 +467,7 @@
                     }
 
                     ingressos.forEach(ticket => {
-                        // Gera QR Code via API pública
                         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ticket.codigoQr}&bgcolor=fff`;
-
                         const item = `
                             <div class="ticket-item">
                                 <div>
@@ -476,13 +475,11 @@
                                     <div class="small text-light mb-2"><i class="fa-solid fa-calendar"></i> ${ticket.eventoData}</div>
                                     <div class="badge bg-info text-dark mb-2">${ticket.tipoIngresso}</div>
                                     <div class="small text-muted"><i class="fa-solid fa-location-dot"></i> ${ticket.localNome}</div>
-                                    <div class="small text-muted mt-2" style="font-family: monospace">HASH: ${ticket.codigoQr.substring(0, 8)}...</div>
                                 </div>
                                 <div>
                                     <img src="${qrUrl}" class="qr-code-img" width="100" height="100" alt="QR Code">
                                 </div>
-                            </div>
-                        `;
+                            </div>`;
                         divLista.innerHTML += item;
                     });
                 }
@@ -512,10 +509,34 @@
 
         function logout() {
             localStorage.clear();
-            location.reload();
+            window.history.replaceState({}, document.title, "/index.html"); // Limpa URL
+            alternarTelas(false);
         }
 
-        if (localStorage.getItem(tokenKey)) alternarTelas(true);
+        // --- INICIALIZAÇÃO COM GOOGLE ---
+        document.addEventListener("DOMContentLoaded", () => {
+            // 1. Verifica se voltou do Google com token na URL
+            const params = new URLSearchParams(window.location.search);
+            const googleToken = params.get("token");
+            
+            if (googleToken) {
+                // Salva o que veio do Google
+                localStorage.setItem(tokenKey, googleToken);
+                localStorage.setItem(userKey, params.get("userId"));
+                localStorage.setItem("username", params.get("name"));
+                
+                // Limpa a URL para ficar bonita
+                window.history.replaceState({}, document.title, "/index.html");
+                
+                alternarTelas(true);
+            } 
+            // 2. Se não, verifica se já estava logado antes
+            else if (localStorage.getItem(tokenKey)) {
+                alternarTelas(true);
+            } else {
+                alternarTelas(false);
+            }
+        });
 
         // CSS Extra
         const style = document.createElement('style');
