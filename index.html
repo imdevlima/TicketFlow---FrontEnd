@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br" data-bs-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,136 +9,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        :root {
-            --primary-color: #6f42c1;
-            --secondary-color: #0dcaf0;
-            --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            --card-bg: #24243e;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg-gradient);
-            min-height: 100vh;
-            color: #eee;
-        }
-
-        .navbar {
-            background: rgba(36, 36, 62, 0.95) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .brand-gradient {
-            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        .login-container {
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card-login {
-            background: var(--card-bg);
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            padding: 2rem;
-        }
-
-        .form-floating > .form-control, .form-floating > .form-select {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-        }
-        .form-floating > label { color: #aaa; }
-        .form-control:focus {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.25);
-        }
-
-        .btn-gradiente {
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            border: none;
-            color: white;
-            font-weight: 600;
-            padding: 12px;
-            transition: all 0.3s ease;
-        }
-        .btn-gradiente:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(111, 66, 193, 0.4);
-            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
-        }
-
-        /* Eventos */
-        #tela-eventos { display: none; padding-top: 80px; }
-
-        .card-evento {
-            background: var(--card-bg);
-            border: none;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        .card-evento:hover { transform: translateY(-5px) scale(1.02); }
-
-        .card-img-top {
-            height: 180px;
-            object-fit: cover;
-            filter: brightness(0.8) contrast(1.2);
-        }
-
-        /* Ticket Styles */
-        .ticket-item {
-            background: rgba(255,255,255,0.05);
-            border-left: 4px solid var(--secondary-color);
-            margin-bottom: 15px;
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .qr-code-img {
-            border: 4px solid white;
-            border-radius: 8px;
-        }
-
-        #loading-spinner { display: none; }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
     <nav class="navbar navbar-expand-lg fixed-top navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <i class="fa-solid fa-ticket-simple fa-rotate-by" style="color: var(--secondary-color); --fa-rotate-angle: -20deg;"></i>
+                <i class="fa-solid fa-ticket-simple fa-rotate-by"
+                    style="color: var(--secondary-color); --fa-rotate-angle: -20deg;"></i>
                 <span class="brand-gradient ms-2">TicketFlow</span>
             </a>
-            
+
             <div class="d-flex align-items-center gap-2">
-                <button id="btn-meus-ingressos" class="btn btn-sm btn-outline-info rounded-pill px-3" style="display: none;" onclick="verMeusIngressos()">
+                <button id="btn-meus-ingressos" class="btn btn-sm btn-outline-info rounded-pill px-3"
+                    style="display: none;" onclick="verMeusIngressos()">
                     <i class="fa-solid fa-ticket"></i> Meus Ingressos
                 </button>
 
                 <div id="user-info" class="me-3 text-muted small ms-2" style="display: none;">
                     <i class="fa-regular fa-user"></i> <span id="username-display">Logado</span>
                 </div>
-                <button id="btn-logout" class="btn btn-outline-danger btn-sm rounded-pill px-3 ms-2" style="display: none;" onclick="logout()">
+                <button id="btn-logout" class="btn btn-outline-danger btn-sm rounded-pill px-3 ms-2"
+                    style="display: none;" onclick="logout()">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
                 </button>
             </div>
@@ -145,30 +38,34 @@
     </nav>
 
     <div class="container">
-        
+
         <section id="tela-login" class="login-container">
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card card-login">
                     <div class="text-center mb-4">
-                         <i class="fa-solid fa-lock fa-3x" style="color: var(--primary-color)"></i>
-                         <h3 class="mt-3 fw-bold">Acesso Restrito</h3>
-                         <p class="text-muted small">Entre para ver os melhores eventos</p>
+                        <i class="fa-solid fa-lock fa-3x" style="color: var(--primary-color)"></i>
+                        <h3 class="mt-3 fw-bold">Acesso Restrito</h3>
+                        <p class="text-muted small">Entre para ver os melhores eventos</p>
                     </div>
 
                     <div id="alert-erro" class="alert alert-danger d-flex align-items-center d-none" role="alert">
                         <i class="fa-solid fa-triangle-exclamation me-2"></i>
                         <div id="msg-erro-txt"></div>
                     </div>
-                    
-                    <a href="http://localhost:8080/oauth2/authorization/google" class="btn btn-light w-100 rounded-pill border d-flex align-items-center justify-content-center mb-3 fw-bold" style="color: #444;">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" style="width: 20px; margin-right: 10px;">
+
+                    <a href="http://localhost:8080/oauth2/authorization/google"
+                        class="btn btn-light w-100 rounded-pill border d-flex align-items-center justify-content-center mb-3 fw-bold"
+                        style="color: #444;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                            style="width: 20px; margin-right: 10px;">
                         Entrar com Google
                     </a>
 
                     <div class="text-center mb-3 text-muted small">——— OU ———</div>
 
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="email" placeholder="name@example.com" value="teste@seguro.com">
+                        <input type="email" class="form-control" id="email" placeholder="name@example.com"
+                            value="teste@seguro.com">
                         <label for="email">Email</label>
                     </div>
                     <div class="form-floating mb-4">
@@ -201,7 +98,8 @@
 
         <div class="modal fade" id="modalCompra" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content" style="background-color: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                <div class="modal-content"
+                    style="background-color: var(--card-bg); color: white; border: 1px solid rgba(255,255,255,0.1);">
                     <div class="modal-header border-0">
                         <h5 class="modal-title fw-bold">🎟️ Finalizar Compra</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -216,12 +114,14 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-muted small">QUANTIDADE</label>
-                                <input type="number" class="form-control bg-dark text-white border-secondary" id="qtd-ingresso" value="1" min="1" max="10">
+                                <input type="number" class="form-control bg-dark text-white border-secondary"
+                                    id="qtd-ingresso" value="1" min="1" max="10">
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-outline-light btn-sm"
+                            data-bs-dismiss="modal">Cancelar</button>
                         <button type="button" class="btn btn-gradiente rounded-pill px-4" onclick="confirmarCompra()">
                             <i class="fa-solid fa-check"></i> Confirmar
                         </button>
@@ -232,9 +132,11 @@
 
         <div class="modal fade" id="modalMeusIngressos" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content" style="background-color: #16213e; color: white; border: 1px solid var(--primary-color);">
+                <div class="modal-content"
+                    style="background-color: #16213e; color: white; border: 1px solid var(--primary-color);">
                     <div class="modal-header border-secondary">
-                        <h5 class="modal-title fw-bold"><i class="fa-solid fa-wallet text-primary"></i> Minha Carteira</h5>
+                        <h5 class="modal-title fw-bold"><i class="fa-solid fa-wallet text-primary"></i> Minha Carteira
+                        </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body" id="lista-meus-ingressos">
@@ -245,306 +147,7 @@
         </div>
 
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        const API_URL = "http://localhost:8080";
-        const tokenKey = "ticketflow_token_v3";
-        const userKey = "ticketflow_userid";
-        let modalBootstrap = null; 
-        let modalIngressosBootstrap = null;
-
-        const telaLogin = document.getElementById("tela-login");
-        const telaEventos = document.getElementById("tela-eventos");
-        const btnLogout = document.getElementById("btn-logout");
-        const btnMeusIngressos = document.getElementById("btn-meus-ingressos");
-        const userInfo = document.getElementById("user-info");
-        const usernameDisplay = document.getElementById("username-display");
-        const loadingSpinner = document.getElementById("loading-spinner");
-        const listaEventosContainer = document.getElementById("lista-eventos");
-        const alertErro = document.getElementById("alert-erro");
-        const btnLogin = document.getElementById("btn-login");
-        const selectIngresso = document.getElementById("select-ingresso");
-
-        // --- UTILITÁRIOS ---
-        function mostrarErro(mensagem) {
-            document.getElementById("msg-erro-txt").innerText = mensagem;
-            alertErro.classList.remove("d-none");
-            setTimeout(() => alertErro.classList.add("d-none"), 5000);
-        }
-
-        function setLoading(isLoading) {
-            if (isLoading) {
-                loadingSpinner.style.display = "block";
-                listaEventosContainer.style.display = "none";
-            } else {
-                loadingSpinner.style.display = "none";
-                listaEventosContainer.style.display = "flex";
-            }
-        }
-
-        function formatarData(dataString) {
-            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            return new Date(dataString).toLocaleDateString('pt-BR', options);
-        }
-
-        // --- LOGIN ---
-        async function fazerLogin() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("senha").value;
-
-            btnLogin.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ...';
-            btnLogin.disabled = true;
-            alertErro.classList.add("d-none");
-
-            try {
-                const response = await fetch(`${API_URL}/auth/login`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, password })
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    localStorage.setItem(tokenKey, data.token);
-                    localStorage.setItem(userKey, data.userId);
-                    localStorage.setItem("username", data.nome || "Usuário");
-                    alternarTelas(true);
-                } else {
-                    mostrarErro("Credenciais inválidas.");
-                }
-            } catch (error) {
-                mostrarErro("Falha ao conectar.");
-            } finally {
-                btnLogin.innerHTML = 'ENTRAR';
-                btnLogin.disabled = false;
-            }
-        }
-
-        // --- LISTAR EVENTOS ---
-        async function carregarEventos() {
-            const token = localStorage.getItem(tokenKey);
-            setLoading(true);
-            
-            try {
-                const response = await fetch(`${API_URL}/events?sort=date,asc`, {
-                    method: "GET",
-                    headers: { "Authorization": `Bearer ${token}` }
-                });
-
-                if (response.ok) {
-                    const dados = await response.json();
-                    renderizarCards(dados.content);
-                } else if (response.status === 403) {
-                    logout();
-                }
-            } catch (error) {
-                listaEventosContainer.innerHTML = `<div class="alert alert-danger col-12">Erro de conexão.</div>`;
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        function renderizarCards(eventos) {
-            listaEventosContainer.innerHTML = "";
-            if (eventos.length === 0) {
-                 listaEventosContainer.innerHTML = `<div class="col-12 text-center text-muted py-5"><h4>Nenhum evento encontrado.</h4></div>`;
-                return;
-            }
-
-            eventos.forEach((evento, index) => {
-                const imagemUrl = `https://source.unsplash.com/random/400x250/?concert,festival&sig=${index}`;
-                
-                const cardHtml = `
-                    <div class="col-md-6 col-lg-4 d-flex align-items-stretch" style="animation: fadeIn 0.5s ease-in-out ${index * 0.1}s both;">
-                        <div class="card card-evento w-100">
-                            <img src="${imagemUrl}" class="card-img-top">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title text-truncate">${evento.titulo}</h5>
-                                <div class="event-meta mt-3">
-                                    <i class="fa-solid fa-calendar-days"></i> ${formatarData(evento.date)}
-                                </div>
-                                <div class="event-meta text-truncate">
-                                    <i class="fa-solid fa-location-dot"></i> ${evento.venue ? evento.venue.nome : 'Local a definir'}
-                                </div>
-                                <p class="card-text text-truncate-3 mt-3">${evento.descricao || ''}</p>
-                                <div class="mt-auto pt-3">
-                                    <button type="button" class="btn btn-gradiente w-100 rounded-pill" onclick="abrirModalCompra('${evento.id}')">
-                                        <i class="fa-solid fa-ticket me-2"></i> COMPRAR
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-                listaEventosContainer.innerHTML += cardHtml;
-            });
-        }
-
-        // --- COMPRA ---
-        async function abrirModalCompra(eventoId) {
-            const elModal = document.getElementById('modalCompra');
-            modalBootstrap = new bootstrap.Modal(elModal);
-            modalBootstrap.show();
-
-            selectIngresso.innerHTML = "<option>Carregando...</option>";
-            const token = localStorage.getItem(tokenKey);
-
-            try {
-                const response = await fetch(`${API_URL}/ticket-types`, {
-                    headers: { "Authorization": `Bearer ${token}` }
-                });
-                const tipos = await response.json();
-                const tiposDoEvento = tipos.filter(t => t.event.id === eventoId);
-
-                selectIngresso.innerHTML = "";
-                if(tiposDoEvento.length === 0) {
-                    selectIngresso.innerHTML = "<option disabled>Esgotado</option>";
-                } else {
-                    tiposDoEvento.forEach(t => {
-                        selectIngresso.innerHTML += `<option value="${t.id}">${t.nome} - R$ ${t.preco}</option>`;
-                    });
-                }
-            } catch(e) {
-                selectIngresso.innerHTML = "<option disabled>Erro ao carregar</option>";
-            }
-        }
-
-        async function confirmarCompra() {
-            const ticketTypeId = selectIngresso.value;
-            const quantidade = document.getElementById("qtd-ingresso").value;
-            const userId = localStorage.getItem(userKey);
-            const token = localStorage.getItem(tokenKey);
-
-            if(!ticketTypeId) return alert("Selecione um ingresso!");
-
-            try {
-                const response = await fetch(`${API_URL}/orders`, {
-                    method: "POST",
-                    headers: { 
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ userId, ticketTypeId, quantidade: parseInt(quantidade) })
-                });
-
-                if(response.ok) {
-                    alert("✅ Compra realizada!");
-                    modalBootstrap.hide();
-                    verMeusIngressos();
-                } else {
-                    alert("❌ Erro na compra.");
-                }
-            } catch (error) {
-                alert("Erro de conexão.");
-            }
-        }
-
-        // --- MEUS INGRESSOS ---
-        async function verMeusIngressos() {
-            const elModal = document.getElementById('modalMeusIngressos');
-            modalIngressosBootstrap = new bootstrap.Modal(elModal);
-            modalIngressosBootstrap.show();
-
-            const divLista = document.getElementById("lista-meus-ingressos");
-            divLista.innerHTML = '<div class="text-center"><div class="spinner-border text-primary"></div></div>';
-
-            const token = localStorage.getItem(tokenKey);
-
-            try {
-                const response = await fetch(`${API_URL}/tickets/my-tickets`, {
-                    method: "GET",
-                    headers: { "Authorization": `Bearer ${token}` }
-                });
-
-                if(response.ok) {
-                    const ingressos = await response.json();
-                    divLista.innerHTML = "";
-
-                    if(ingressos.length === 0) {
-                        divLista.innerHTML = `<div class="text-center text-muted py-4"><i class="fa-solid fa-ticket fa-2x mb-2"></i><p>Você ainda não comprou ingressos.</p></div>`;
-                        return;
-                    }
-
-                    ingressos.forEach(ticket => {
-                        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ticket.codigoQr}&bgcolor=fff`;
-                        const item = `
-                            <div class="ticket-item">
-                                <div>
-                                    <h5 class="fw-bold text-primary mb-1">${ticket.eventoTitulo}</h5>
-                                    <div class="small text-light mb-2"><i class="fa-solid fa-calendar"></i> ${ticket.eventoData}</div>
-                                    <div class="badge bg-info text-dark mb-2">${ticket.tipoIngresso}</div>
-                                    <div class="small text-muted"><i class="fa-solid fa-location-dot"></i> ${ticket.localNome}</div>
-                                </div>
-                                <div>
-                                    <img src="${qrUrl}" class="qr-code-img" width="100" height="100" alt="QR Code">
-                                </div>
-                            </div>`;
-                        divLista.innerHTML += item;
-                    });
-                }
-            } catch(e) {
-                divLista.innerHTML = `<div class="text-danger text-center">Erro ao carregar carteira.</div>`;
-            }
-        }
-
-        // --- CONTROLE DE TELA ---
-        function alternarTelas(logado) {
-            if (logado) {
-                telaLogin.classList.add("d-none");
-                telaEventos.style.display = "block";
-                btnLogout.style.display = "block";
-                btnMeusIngressos.style.display = "block";
-                userInfo.style.display = "block";
-                usernameDisplay.innerText = `Olá, ${localStorage.getItem("username") || 'Usuário'}`;
-                carregarEventos();
-            } else {
-                telaLogin.classList.remove("d-none");
-                telaEventos.style.display = "none";
-                btnLogout.style.display = "none";
-                btnMeusIngressos.style.display = "none";
-                userInfo.style.display = "none";
-            }
-        }
-
-        function logout() {
-            localStorage.clear();
-            window.history.replaceState({}, document.title, "/index.html"); // Limpa URL
-            alternarTelas(false);
-        }
-
-        // --- INICIALIZAÇÃO COM GOOGLE ---
-        document.addEventListener("DOMContentLoaded", () => {
-            // 1. Verifica se voltou do Google com token na URL
-            const params = new URLSearchParams(window.location.search);
-            const googleToken = params.get("token");
-            
-            if (googleToken) {
-                // Salva o que veio do Google
-                localStorage.setItem(tokenKey, googleToken);
-                localStorage.setItem(userKey, params.get("userId"));
-                localStorage.setItem("username", params.get("name"));
-                
-                // Limpa a URL para ficar bonita
-                window.history.replaceState({}, document.title, "/index.html");
-                
-                alternarTelas(true);
-            } 
-            // 2. Se não, verifica se já estava logado antes
-            else if (localStorage.getItem(tokenKey)) {
-                alternarTelas(true);
-            } else {
-                alternarTelas(false);
-            }
-        });
-
-        // CSS Extra
-        const style = document.createElement('style');
-        style.innerHTML = `
-            @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-            .text-truncate-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        `;
-        document.head.appendChild(style);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
